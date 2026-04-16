@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TradeWise — Trade Scenario Wizards</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brand:      #3b35c7;
+  --brand-dk:   #2e29a8;
+  --brand-lt:   #eeeeff;
+  --brand-bd:   #d0cef7;
+  --nav-bg:     #3530be;
+  --green:      #0e7c4a;
+  --green-lt:   #e8f7ef;
+  --green-bd:   #a3d9bc;
+  --amber:      #b45309;
+  --amber-lt:   #fef3e2;
+  --amber-bd:   #f8d49a;
+  --red:        #c0392b;
+  --red-lt:     #fdf0ee;
+  --red-bd:     #f5b7b1;
+  --orange:     #d97706;
+  --orange-lt:  #fff7ed;
+  --orange-bd:  #fed7aa;
+  --text:       #1a1a2e;
+  --text-2:     #5a5a72;
+  --text-3:     #9898b0;
+  --border:     #d8d8e8;
+  --border-2:   #ebebf5;
+  --bg:         #ffffff;
+  --surface:    #ffffff;
+  --fh:         30px;
+  --r:          4px;
+  --r-lg:       6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#ffffff;color:var(--text);font-size:12px;overflow:hidden;}
+
+/* ═══ APP SHELL ═══ */
+.app{display:flex;height:100vh;background:#ffffff;}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:160px;flex-shrink:0;background:var(--nav-bg);display:flex;flex-direction:column;overflow:hidden;}
+.sb-head{padding:12px 14px 10px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between;}
+.sb-logo{font-size:14px;font-weight:700;color:#fff;letter-spacing:-.3px;}
+.sb-x{background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.6);width:20px;height:20px;border-radius:3px;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;}
+.sb-x:hover{background:rgba(255,255,255,.2);}
+.nav{padding:6px 0;flex:1;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:7px;padding:7px 12px;font-size:11.5px;font-weight:500;color:rgba(255,255,255,.72);cursor:pointer;transition:background .15s;border-left:2px solid transparent;white-space:nowrap;}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+.nav-item.active{background:rgba(255,255,255,.14);color:#fff;font-weight:600;border-left-color:#fff;}
+.nav-icon{font-size:12px;flex-shrink:0;width:14px;}
+.nav-arrow{margin-left:auto;font-size:8px;}
+.nav-child{display:flex;align-items:center;padding:5px 12px 5px 30px;font-size:11px;font-weight:400;color:rgba(255,255,255,.65);cursor:pointer;transition:background .15s;border-left:2px solid transparent;}
+.nav-child:hover{background:rgba(255,255,255,.08);color:#fff;}
+.nav-child.active{color:#fff;font-weight:600;background:rgba(255,255,255,.12);border-left-color:rgba(255,255,255,.5);}
+.nav-child::before{content:'·';margin-right:5px;font-size:10px;}
+
+/* ═══ MAIN ═══ */
+.main{flex:1;overflow-y:auto;background:#ffffff;}
+.page{display:none;padding:14px 28px 60px;}
+.page.active{display:block;}
+
+/* Page title */
+.page-title{font-size:16px;font-weight:700;letter-spacing:-.3px;margin-bottom:3px;}
+.page-sub{font-size:11.5px;color:var(--text-2);margin-bottom:14px;}
+
+/* Step bar */
+.step-bar{display:flex;align-items:center;background:#ffffff;border:1px solid var(--border);border-radius:var(--r-lg);padding:6px 14px;margin-bottom:10px;}
+.step-item{display:flex;align-items:center;gap:5px;flex:1;}
+.step-n{width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;flex-shrink:0;}
+.step-n.on{background:var(--brand);color:#fff;}
+.step-n.off{background:var(--border);color:var(--text-3);}
+.step-lbl{font-size:10.5px;font-weight:500;}
+.step-lbl.on{color:var(--brand);}
+.step-lbl.off{color:var(--text-3);}
+.step-sep{color:var(--border);font-size:11px;margin:0 5px;}
+.req-note{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text-2);margin-bottom:10px;}
+.req-note .r{color:var(--red);font-weight:600;}
+
+/* Section labels */
+.sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--brand);background:var(--brand-lt);border:1px solid var(--brand-bd);border-radius:var(--r);padding:4px 10px;display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.sec-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+
+/* Fields */
+.frow{display:flex;gap:10px;margin-bottom:7px;align-items:flex-start;}
+.frow:last-child{margin-bottom:0;}
+.fg{display:flex;flex-direction:column;gap:3px;flex:1;}
+.fg.w-auto{flex:none;}
+.flabel{font-size:11px;font-weight:500;color:var(--text-2);display:flex;align-items:center;gap:2px;}
+.req{color:var(--red);font-size:12px;}
+.fhint{font-size:10px;color:var(--text-3);}
+.fsec{margin-bottom:10px;}
+
+input[type=text],input[type=number],input[type=date],textarea,select{
+  font-family:'Inter',sans-serif;font-size:12px;color:var(--text);background:#ffffff;
+  border:1px solid var(--border);border-radius:var(--r);height:var(--fh);padding:0 9px;
+  width:100%;outline:none;transition:border-color .15s;-webkit-appearance:none;
+}
+textarea{height:44px;padding:6px 9px;resize:none;line-height:1.5;}
+input:focus,textarea:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 2px rgba(59,53,199,.1);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%236b6b88' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:22px;cursor:pointer;}
+input[type=checkbox]{width:auto;height:auto;margin-right:6px;cursor:pointer;accent-color:var(--brand);}
+.check-row{display:flex;align-items:flex-start;gap:0;margin-top:6px;}
+.check-label{font-size:11.5px;font-weight:500;color:var(--text);}
+.check-hint{font-size:10.5px;color:var(--text-3);margin-top:2px;padding-left:19px;}
+
+/* HS Row */
+.hs-row{display:flex;align-items:stretch;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;height:var(--fh);transition:border-color .15s;}
+.hs-row:focus-within{border-color:var(--brand);box-shadow:0 0 0 2px rgba(59,53,199,.1);}
+.qai-btn{display:flex;align-items:center;gap:4px;padding:0 9px;background:var(--brand-lt);border:none;border-right:1px solid var(--border);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--brand);cursor:pointer;white-space:nowrap;transition:background .15s;}
+.qai-btn:hover{background:#e0e0f8;}
+.qai-btn.loading{opacity:.7;cursor:wait;}
+.qai-btn .spin{display:inline-block;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.qai-arr{display:flex;align-items:center;padding:0 6px;background:var(--brand-lt);border:none;border-right:1px solid var(--border);color:var(--brand);font-size:8px;cursor:pointer;}
+.qai-arr:hover{background:#e0e0f8;}
+.hs-input{flex:1;border:none!important;box-shadow:none!important;border-radius:0!important;font-family:'Inter',monospace!important;font-weight:500;color:var(--brand)!important;font-size:12px;}
+.hs-input:focus{box-shadow:none!important;}
+.ot-btn{display:flex;align-items:center;gap:5px;padding:0 10px;background:#ffffff;border:none;border-left:1px solid var(--border);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--brand);cursor:pointer;white-space:nowrap;}
+.ot-btn:hover{background:var(--brand-lt);}
+.ecn-btn{display:flex;align-items:center;gap:5px;padding:0 10px;background:var(--orange-lt);border:none;border-left:1px solid var(--orange-bd);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--orange);cursor:pointer;white-space:nowrap;}
+.ecn-btn:hover{background:#fee5b8;}
+
+/* QAI Modal */
+.qai-modal-bg{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:500;opacity:0;pointer-events:none;transition:opacity .2s;}
+.qai-modal-bg.show{opacity:1;pointer-events:all;}
+.qai-modal{background:#fff;border-radius:10px;width:520px;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);transform:scale(.96);transition:transform .2s;}
+.qai-modal-bg.show .qai-modal{transform:scale(1);}
+.qai-modal-head{padding:14px 18px 12px;border-bottom:1px solid var(--border-2);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;}
+.qai-modal-head-left{display:flex;align-items:flex-start;gap:10px;}
+.qai-modal-accent{width:4px;height:36px;background:var(--brand);border-radius:2px;flex-shrink:0;}
+.qai-modal-title{font-size:13px;font-weight:700;color:var(--text);}
+.qai-modal-sub{font-size:11px;color:var(--text-3);margin-top:2px;}
+.qai-modal-close{background:none;border:none;font-size:16px;color:var(--text-3);cursor:pointer;padding:2px 6px;border-radius:4px;line-height:1;}
+.qai-modal-close:hover{background:var(--border-2);color:var(--text);}
+.qai-modal-body{overflow-y:auto;flex:1;padding:16px 18px;}
+.qai-modal-footer{padding:10px 18px;border-top:1px solid var(--border-2);flex-shrink:0;}
+
+/* Input section */
+.qai-input-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-3);margin-bottom:5px;}
+.qai-input-box{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:9px 11px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--text);outline:none;resize:none;height:70px;line-height:1.5;transition:border-color .15s;}
+.qai-input-box:focus{border-color:var(--brand);box-shadow:0 0 0 2px rgba(59,53,199,.1);}
+.qai-classify-btn{width:100%;margin-top:10px;padding:10px;background:var(--brand);color:#fff;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:background .15s;}
+.qai-classify-btn:hover{background:var(--brand-dk);}
+.qai-classify-btn:disabled{opacity:.6;cursor:wait;}
+
+/* Best match card */
+.qai-best-card{background:var(--brand-lt);border:1.5px solid var(--brand-bd);border-radius:8px;padding:14px 16px;margin-top:14px;}
+.qai-best-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--brand);margin-bottom:6px;}
+.qai-best-code{font-family:'Inter',monospace;font-size:24px;font-weight:800;color:var(--brand);letter-spacing:.5px;margin-bottom:4px;}
+.qai-best-desc{font-size:11.5px;color:var(--text);line-height:1.6;margin-bottom:10px;}
+.qai-best-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.qai-conf-bar-wrap{flex:1;}
+.qai-conf-bar-track{height:5px;background:var(--border-2);border-radius:3px;overflow:hidden;margin-bottom:3px;}
+.qai-conf-bar-fill{height:100%;border-radius:3px;transition:width .6s ease;}
+.qai-conf-text{font-size:10.5px;font-weight:700;color:var(--brand);}
+.use-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;background:var(--brand);color:#fff;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+.use-btn:hover{background:var(--brand-dk);}
+
+/* Reasoning */
+.qai-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);margin:14px 0 6px;}
+.qai-reasoning{font-size:11.5px;color:var(--text);line-height:1.7;background:var(--border-2);border-radius:6px;padding:10px 12px;}
+.qai-reasoning strong{color:var(--brand);font-weight:700;}
+.qai-assumptions{font-size:11px;color:var(--brand);font-style:italic;line-height:1.6;padding:8px 12px;background:var(--brand-lt);border-left:3px solid var(--brand);border-radius:0 4px 4px 0;margin-top:8px;}
+.qai-assumptions strong{font-style:normal;}
+
+/* Tariff context table */
+.qai-tariff-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-3);margin:14px 0 6px;display:flex;align-items:center;gap:6px;}
+.qai-tariff-heading{font-size:10px;color:var(--text-3);font-weight:400;}
+.qai-tariff-table{width:100%;border-collapse:collapse;border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.qai-tariff-table th{background:var(--border-2);padding:6px 10px;text-align:left;font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--border);}
+.qai-tariff-table td{padding:7px 10px;font-size:11.5px;border-bottom:1px solid var(--border-2);color:var(--text);}
+.qai-tariff-table tr:last-child td{border-bottom:none;}
+.qai-tariff-table tr.highlight td{background:var(--brand-lt);font-weight:600;color:var(--brand);}
+.qai-tariff-table td:first-child{font-family:'Inter',monospace;font-size:11px;color:var(--brand);}
+.qai-loading-state{text-align:center;padding:28px 0;color:var(--text-3);}
+.qai-loading-state .big-spin{font-size:24px;display:inline-block;animation:spin .8s linear infinite;margin-bottom:10px;}
+.qai-loading-state p{font-size:12px;}
+
+/* Buttons */
+.btn-p{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;background:var(--brand);color:#fff;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 1px 3px rgba(59,53,199,.25);transition:background .15s;}
+.btn-p:hover{background:var(--brand-dk);}
+.btn-s{padding:7px 16px;background:#ffffff;color:var(--text-2);border:1px solid var(--border);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;}
+.btn-s:hover{border-color:var(--text-3);color:var(--text);}
+.btn-grn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;background:var(--green);color:#fff;border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-row{display:flex;gap:10px;margin-top:10px;align-items:center;}
+.classify-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:var(--brand-lt);color:var(--brand);border:1px solid var(--brand-bd);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;}
+
+/* UOM card */
+.uom-card{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;}
+.uom-head{display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:#ffffff;border-bottom:1px solid var(--border);}
+.uom-title{font-size:12px;font-weight:600;}
+.add-btn{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:#ffffff;color:var(--brand);border:1px solid var(--border);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;}
+.add-btn:hover{background:var(--brand-lt);border-color:var(--brand-bd);}
+.uom-empty{padding:18px;text-align:center;font-size:11.5px;color:var(--text-3);background:#ffffff;}
+
+/* Tables */
+.tbl-wrap{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;margin-top:8px;}
+table{width:100%;border-collapse:collapse;}
+thead{background:#ffffff;}
+th{padding:7px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text-3);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;}
+td{padding:8px 12px;border-bottom:1px solid var(--border-2);font-size:12px;color:var(--text);}
+tr:last-child td{border-bottom:none;}
+.tr-empty td{text-align:center;color:var(--text-3);font-size:11.5px;padding:18px;}
+td input,td select{height:27px;font-size:11.5px;padding:0 7px;}
+td select{padding-right:20px;}
+
+/* Sourcings section */
+.src-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.src-lbl{font-size:12.5px;font-weight:600;display:flex;align-items:center;gap:6px;}
+.src-cnt{font-size:10px;font-weight:600;background:var(--brand-lt);color:var(--brand);border:1px solid var(--brand-bd);padding:1px 6px;border-radius:20px;}
+.src-note{font-size:11px;color:var(--text-3);margin-bottom:8px;}
+.calc-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#ffffff;border:1px solid var(--border);border-radius:var(--r-lg);margin-top:10px;}
+.calc-note{font-size:11px;color:var(--text-2);}
+.calc-note small{display:block;color:var(--text-3);margin-top:2px;font-size:10px;}
+
+/* ML wizard */
+.shared-bar{background:#ffffff;border:1px solid var(--border);border-radius:var(--r-lg);padding:10px 14px;margin-bottom:12px;}
+.li-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.li-title{font-size:12.5px;font-weight:600;}
+td input[type=number]{width:70px;}
+.ai-classify{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--brand);background:var(--brand-lt);border:1px solid var(--brand-bd);border-radius:var(--r);padding:2px 7px;cursor:pointer;white-space:nowrap;}
+
+/* API docs */
+.api-wrap{padding:14px 18px 40px;}
+.api-title{font-size:15px;font-weight:700;margin-bottom:2px;}
+.api-sub{font-size:11px;color:var(--text-3);margin-bottom:14px;}
+.api-search{position:relative;margin-bottom:14px;}
+.api-search input{padding-left:30px;height:32px;}
+.api-search .si{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--text-3);pointer-events:none;}
+.api-group{margin-bottom:14px;}
+.api-group-label{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--border-2);}
+.api-cnt{font-size:10px;font-weight:600;background:var(--border-2);color:var(--text-3);padding:1px 6px;border-radius:20px;}
+.api-row{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid var(--border-2);}
+.api-row:last-child{border-bottom:none;}
+.method{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:3px;min-width:34px;text-align:center;flex-shrink:0;margin-top:1px;}
+.m-get{background:#e8f4fd;color:#1a6fa8;}
+.m-post{background:#e8f7ef;color:#0e7c4a;}
+.ep-name{font-size:11.5px;font-weight:600;color:var(--text);font-family:'Inter',monospace;}
+.ep-desc{font-size:10.5px;color:var(--text-3);margin-top:1px;}
+
+/* Preferences */
+.pref-card{border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;flex:1;display:flex;flex-direction:column;}
+.pref-body{padding:12px 16px;flex:1;}
+.divider{height:1px;background:var(--border-2);margin:8px 0;}
+
+#page-home{display:none;padding:14px 28px 0;flex-direction:column;min-height:calc(100vh - 80px);background:#ffffff;}
+#page-home.active{display:flex;}
+
+/* Footer */
+.page-footer{position:fixed;bottom:0;left:160px;right:0;background:#ffffff;border-top:1px solid var(--border);padding:8px 28px;display:flex;align-items:center;justify-content:space-between;z-index:40;}
+.footer-save{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-3);}
+.sdot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+
+/* Badge */
+.badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.badge-warn{background:var(--amber-lt);color:var(--amber);border:1px solid var(--amber-bd);}
+.badge-ok{background:var(--green-lt);color:var(--green);border:1px solid var(--green-bd);}
+.badge-info{background:var(--border-2);color:var(--text-2);border:1px solid var(--border);}
+.badge-red{background:var(--red-lt);color:var(--red);border:1px solid var(--red-bd);}
+
+/* ML row actions */
+.row-del{background:none;border:none;color:var(--text-3);cursor:pointer;padding:2px 5px;border-radius:3px;font-size:12px;}
+.row-del:hover{background:var(--red-lt);color:var(--red);}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ✅ WELCOME TILES */
+.welcome-tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;}
+.wt-card{border:1px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .15s;background:#fff;}
+.wt-card:hover{border-color:var(--brand);box-shadow:0 2px 8px rgba(59,53,199,.1);transform:translateY(-1px);}
+.wt-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:8px;}
+.wt-name{font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.wt-desc{font-size:10px;color:var(--text-3);line-height:1.5;margin-bottom:8px;}
+.wt-cta{font-size:10.5px;font-weight:600;color:var(--brand);}
+
+/* ✅ FORM VALIDATION */
+.field-err{font-size:10px;color:var(--red);font-weight:500;margin-top:2px;display:none;}
+.field-err.show{display:block;}
+input.invalid,select.invalid{border-color:var(--red)!important;background:#fff8f8!important;}
+.toast{position:fixed;top:16px;right:20px;padding:9px 16px;border-radius:6px;font-size:12px;font-weight:600;z-index:999;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);transform:translateX(120%);transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.toast.show{transform:translateX(0);}
+.toast.success{background:#0e7c4a;color:#fff;}
+.toast.error{background:#c0392b;color:#fff;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar">
+  <div class="sb-head">
+    <span class="sb-logo">TradeWise</span>
+    <button class="sb-x">✕</button>
+  </div>
+  <div class="nav">
+    <div class="nav-item" onclick="nav('home')">
+      <span class="nav-icon">🏠</span>Home
+    </div>
+    <div class="nav-item" onclick="toggleWizards(this)">
+      <span class="nav-icon">◈</span>Scenario Wizards<span class="nav-arrow">▾</span>
+    </div>
+    <div id="wizard-nav">
+      <div class="nav-child" onclick="nav('export')">Export Scenario Wizard</div>
+      <div class="nav-child" onclick="nav('import')">Import Scenario Wizard</div>
+      <div class="nav-child" onclick="nav('landed')">Import Landed Cost Wizard</div>
+      <div class="nav-child" onclick="nav('ml')">ML Import Landed Cost Wizard</div>
+      <div class="nav-child" onclick="nav('classify')">Classification Wizard</div>
+      <div class="nav-child" onclick="nav('dps')">DPS Wizard</div>
+    </div>
+    <div class="nav-item" onclick="nav('portal')">
+      <span class="nav-icon">⊞</span>Trade Services Portal
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+<!-- ── HOME / USER PREFERENCES ── -->
+<div class="page active" id="page-home">
+  <div class="page-title">User Preferences</div>
+  <div class="page-sub">Set your preferences once — they will be applied as defaults each time you open a wizard.</div>
+
+  <!-- ✅ WELCOME QUICK LAUNCH TILES -->
+  <div class="welcome-tiles">
+    <div class="wt-card" onclick="nav('export')">
+      <div class="wt-icon" style="background:#eeeeff;color:#3b35c7;">📤</div>
+      <div class="wt-name">Export Scenario</div>
+      <div class="wt-desc">Check export controls, ECN &amp; tariff classification</div>
+      <div class="wt-cta">Launch →</div>
+    </div>
+    <div class="wt-card" onclick="nav('import')">
+      <div class="wt-icon" style="background:#e8f7ef;color:#0e7c4a;">📥</div>
+      <div class="wt-name">Import Scenario</div>
+      <div class="wt-desc">Calculate duties, taxes &amp; landed costs for imports</div>
+      <div class="wt-cta">Launch →</div>
+    </div>
+    <div class="wt-card" onclick="nav('landed')">
+      <div class="wt-icon" style="background:#fef3e2;color:#b45309;">💰</div>
+      <div class="wt-name">Import Landed Cost</div>
+      <div class="wt-desc">Compare sourcing origins &amp; total landed costs</div>
+      <div class="wt-cta">Launch →</div>
+    </div>
+    <div class="wt-card" onclick="nav('ml')">
+      <div class="wt-icon" style="background:#eeeeff;color:#3b35c7;">🤖</div>
+      <div class="wt-name">ML Landed Cost</div>
+      <div class="wt-desc">Classify &amp; calculate costs for multiple items at once</div>
+      <div class="wt-cta">Launch →</div>
+    </div>
+    <div class="wt-card" onclick="nav('classify')">
+      <div class="wt-icon" style="background:#f5f0ff;color:#7c3aed;">🔍</div>
+      <div class="wt-name">Classification</div>
+      <div class="wt-desc">Determine HS codes &amp; ECN for any product</div>
+      <div class="wt-cta">Launch →</div>
+    </div>
+    <div class="wt-card" onclick="nav('dps')">
+      <div class="wt-icon" style="background:#fdf0ee;color:#c0392b;">🚫</div>
+      <div class="wt-name">DPS Wizard</div>
+      <div class="wt-desc">Screen trading parties against sanctions lists</div>
+      <div class="wt-cta">Launch →</div>
+    </div>
+  </div>
+
+  <div class="pref-card">
+    <div class="pref-body">
+      <div class="sec-label"><div class="sec-dot" style="background:var(--brand)"></div>Your Profile</div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">User Location <span class="req">*</span></label>
+          <select id="pref-location"><option value="" disabled selected></option><option>🇺🇸 United States</option><option>🇦🇺 Australia</option><option>🇩🇪 Germany</option><option>🇬🇧 United Kingdom</option><option>🇮🇳 India</option><option>🇨🇳 China</option><option>🇨🇦 Canada</option><option>🇸🇬 Singapore</option></select>
+        </div>
+        <div class="fg">
+          <label class="flabel">Preferred Currency <span class="req">*</span></label>
+          <select id="pref-currency"><option value="" disabled selected></option><option>USD – US Dollar</option><option>EUR – Euro</option><option>AUD – Australian Dollar</option><option>GBP – British Pound</option><option>INR – Indian Rupee</option><option>CNY – Chinese Yuan</option><option>CAD – Canadian Dollar</option></select>
+        </div>
+      </div>
+      <div class="fhint">Your location sets the default importing country. Your preferred currency pre-fills cost calculation fields.</div>
+      <div class="divider"></div>
+      <div class="sec-label"><div class="sec-dot" style="background:var(--green)"></div>Default Trade Lane</div>
+      <div class="fhint" style="margin-bottom:6px;">Optional. Pre-fill country fields across all wizards automatically.</div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Default Country of Export</label>
+          <select id="pref-export"><option value="" disabled selected></option><option>🇨🇳 China</option><option>🇮🇳 India</option><option>🇻🇳 Vietnam</option><option>🇩🇪 Germany</option><option>🇺🇸 United States</option></select>
+        </div>
+        <div class="fg">
+          <label class="flabel">Default Country of Origin</label>
+          <select id="pref-origin"><option value="" disabled selected></option><option>🇨🇳 China</option><option>🇮🇳 India</option><option>🇻🇳 Vietnam</option><option>🇩🇪 Germany</option></select>
+        </div>
+        <div class="fg">
+          <label class="flabel">Default Country of Import</label>
+          <select id="pref-import"><option value="" disabled selected></option><option>🇺🇸 United States</option><option>🇦🇺 Australia</option><option>🇩🇪 Germany</option><option>🇬🇧 United Kingdom</option></select>
+        </div>
+      </div>
+      <div class="fhint">When set, these override your User Location for the corresponding country fields in wizards.</div>
+      <div class="divider"></div>
+      <div class="sec-label"><div class="sec-dot" style="background:var(--amber)"></div>Shipment Defaults</div>
+      <div class="frow">
+        <div class="fg">
+          <label class="flabel">Default INCO Term</label>
+          <select id="pref-inco"><option value="" disabled selected></option><option>FOB – Free On Board</option><option>CIF – Cost, Insurance &amp; Freight</option><option>EXW – Ex Works</option><option>DDP – Delivered Duty Paid</option></select>
+        </div>
+        <div class="fg">
+          <label class="flabel">Default Mode of Transport</label>
+          <select id="pref-transport"><option value="" disabled selected></option><option>Sea</option><option>Air</option><option>Road</option><option>Rail</option></select>
+        </div>
+      </div>
+      <div class="check-row">
+        <input type="checkbox" id="eff-today">
+        <div>
+          <label class="check-label" for="eff-today">Default effective date to today</label>
+          <div class="check-hint">When checked, the effective date will automatically be set to the current date each time you open a wizard.</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-p" onclick="savePrefs()">Save Preferences</button>
+        <button class="btn-s" onclick="clearPrefs()">Clear All</button>
+        <span id="pref-saved" style="display:none;font-size:11px;color:var(--green);font-weight:600;">✓ Saved!</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── EXPORT SCENARIO WIZARD ── -->
+<div class="page" id="page-export">
+  <div class="page-title">Export Scenario</div>
+  <div class="step-bar"><div class="step-item"><div class="step-n on">1</div><span class="step-lbl on">Product &amp; Trade Lane</span></div><span class="step-sep">›</span><div class="step-item"><div class="step-n off">2</div><span class="step-lbl off">Review</span></div><span class="step-sep">›</span><div class="step-item"><div class="step-n off">3</div><span class="step-lbl off">Results</span></div></div>
+  <div class="req-note"><span class="r">*</span> Indicates a required field</div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--brand)"></div>Product</div>
+    <div class="frow">
+      <div class="fg">
+        <label class="flabel">Product Description <span class="req">*</span></label>
+        <input type="text" placeholder="Enter your product description here – short and long descriptions (e.g. from catalog) are acceptable">
+      </div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--green)"></div>Trade Lane</div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">Source Country <span class="req">*</span></label><select><option value="" disabled selected></option><option>🇺🇸 United States</option><option>🇦🇺 Australia</option><option>🇩🇪 Germany</option><option>🇬🇧 United Kingdom</option></select></div>
+      <div class="fg"><label class="flabel">Destination Country <span class="req">*</span></label><select><option value="" disabled selected></option><option>🇨🇳 China</option><option>🇮🇳 India</option><option>🇯🇵 Japan</option><option>🇧🇷 Brazil</option></select></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">Origin Country <span class="req">*</span></label><select><option value="" disabled selected></option><option>🇺🇸 United States</option><option>🇩🇪 Germany</option><option>🇬🇧 United Kingdom</option></select></div>
+      <div class="fg"><label class="flabel">Effective Date</label><input type="date"></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:#7c3aed"></div>Classification</div>
+    <div class="frow" style="align-items:flex-end;gap:16px;">
+      <div class="fg">
+        <label class="flabel">HS Code <span class="req">*</span></label>
+        <div class="qai-wrap">
+          <div class="hs-row"><button class="qai-btn" onclick="triggerQAI('export-hs')">✦ QAI</button><button class="qai-arr" onclick="triggerQAI('export-hs')">▾</button><input class="hs-input" id="export-hs" type="text" placeholder="AI result or enter manually"></input><button class="ot-btn">⊞ Open Tariff</button></div>
+          <div class="qai-panel" id="panel-export-hs"></div>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="flabel">ECN</label>
+        <div class="hs-row"><button class="qai-btn">✦ QAI</button><button class="qai-arr">▾</button><input class="hs-input" type="text" placeholder="AI result or enter manually"><button class="ecn-btn">⚡ ECN Lookup</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn-s">Reset Form</button><button class="btn-p" onclick="runScenario('page-export')">Run Scenario ›</button></div>
+</div>
+
+<!-- ── IMPORT SCENARIO WIZARD ── -->
+<div class="page" id="page-import">
+  <div class="page-title">Import Scenario Wizard</div>
+  <div class="step-bar"><div class="step-item"><div class="step-n on">1</div><span class="step-lbl on">Product &amp; Shipment</span></div><span class="step-sep">›</span><div class="step-item"><div class="step-n off">2</div><span class="step-lbl off">Review</span></div><span class="step-sep">›</span><div class="step-item"><div class="step-n off">3</div><span class="step-lbl off">Results</span></div></div>
+  <div class="req-note"><span class="r">*</span> Indicates a required field</div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--brand)"></div>Product</div>
+    <div class="frow"><div class="fg"><label class="flabel">Product Description <span class="req">*</span></label><input type="text" placeholder="Enter your product description here – short and long descriptions (e.g. from catalog) are acceptable"></div></div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--green)"></div>Trade Lane</div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">Importing Country <span class="req">*</span></label><select><option value="" disabled selected></option><option>🇺🇸 United States</option><option>🇦🇺 Australia</option><option>🇩🇪 Germany</option><option>🇬🇧 United Kingdom</option><option>🇮🇳 India</option></select></div>
+      <div class="fg"><label class="flabel">INCO Term <span class="req">*</span></label><select><option value="" disabled selected></option><option>FOB – Free On Board</option><option>CIF – Cost, Insurance &amp; Freight</option><option>EXW – Ex Works</option><option>DDP – Delivered Duty Paid</option></select></div>
+      <div class="fg"><label class="flabel">Country of Export <span class="req">*</span></label><select><option value="" disabled selected></option><option>🇨🇳 China</option><option>🇮🇳 India</option><option>🇻🇳 Vietnam</option><option>🇨🇦 Canada</option></select></div>
+      <div class="fg"><label class="flabel">Country of Origin <span class="req">*</span></label><select><option value="" disabled selected></option><option>🇨🇳 China</option><option>🇮🇳 India</option><option>🇻🇳 Vietnam</option></select></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--amber)"></div>Shipment Values</div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">Unit Price <span class="req">*</span></label><input type="number" placeholder="0.00"></div>
+      <div class="fg"><label class="flabel">Currency <span class="req">*</span></label><select><option value="" disabled selected></option><option>USD</option><option>EUR</option><option>AUD</option><option>GBP</option><option>INR</option></select></div>
+      <div class="fg"><label class="flabel">Quantity <span class="req">*</span></label><input type="number" placeholder="0"></div>
+      <div class="fg"><label class="flabel">Mode of Transport <span class="req">*</span></label><select><option value="" disabled selected></option><option>Sea</option><option>Air</option><option>Road</option><option>Rail</option></select></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">Insurance Cost</label><input type="number" placeholder="0.00"></div>
+      <div class="fg"><label class="flabel">Freight Charges</label><input type="number" placeholder="0.00"></div>
+      <div class="fg"><label class="flabel">Effective Date</label><input type="date"></div>
+      <div class="fg"></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:#7c3aed"></div>Classification</div>
+    <div class="frow"><div class="fg"><label class="flabel">HS Code <span class="req">*</span></label><div class="qai-wrap"><div class="hs-row"><button class="qai-btn" onclick="triggerQAI('import-hs')">✦ QAI</button><button class="qai-arr" onclick="triggerQAI('import-hs')">▾</button><input class="hs-input" id="import-hs" type="text" placeholder="AI result or enter manually"><button class="ot-btn">⊞ Open Tariff</button></div><div class="qai-panel" id="panel-import-hs"></div></div></div></div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--text-3)"></div>Customs Unit of Measure</div>
+    <div class="uom-card"><div class="uom-head"><span class="uom-title">UOM Rows</span><button class="add-btn">+ Add</button></div><div class="uom-empty">No UOM rows added</div></div>
+  </div>
+  <div class="btn-row"><button class="btn-s">Reset Form</button><button class="btn-p" onclick="runScenario('page-import')">Run Scenario ›</button></div>
+</div>
+
+<!-- ── IMPORT LANDED COST WIZARD ── -->
+<div class="page" id="page-landed" style="padding-top:10px;">
+  <div class="page-title" style="margin-bottom:2px;">Import Landed Cost Wizard</div>
+  <div class="step-bar" style="margin-bottom:6px;"><div class="step-item"><div class="step-n on">1</div><span class="step-lbl on">Product &amp; Shipment</span></div><span class="step-sep">›</span><div class="step-item"><div class="step-n off">2</div><span class="step-lbl off">Review</span></div><span class="step-sep">›</span><div class="step-item"><div class="step-n off">3</div><span class="step-lbl off">Results</span></div></div>
+  <div class="req-note" style="margin-bottom:6px;"><span class="r">*</span> Indicates a required field</div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--brand)"></div>Product</div>
+    <div class="frow"><div class="fg"><label class="flabel">Product Description <span class="req">*</span></label><input type="text" placeholder="Enter your product description here — short and long descriptions (e.g. from a catalog) are all acceptable"></div></div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--green)"></div>Trade Lane</div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">Importing Country <span class="req">*</span></label><select><option value="" disabled selected></option><option>🇺🇸 United States</option><option>🇦🇺 Australia</option><option>🇩🇪 Germany</option></select></div>
+      <div class="fg"><label class="flabel">INCO Term <span class="req">*</span></label><select><option value="" disabled selected></option><option>FOB – Free On Board</option><option>CIF – Cost, Insurance &amp; Freight</option><option>EXW – Ex Works</option></select></div>
+      <div class="fg"><label class="flabel">Mode of Transport <span class="req">*</span></label><select><option value="" disabled selected></option><option>Sea</option><option>Air</option><option>Road</option></select></div>
+      <div class="fg"><label class="flabel">Effective Date</label><input type="date"></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--amber)"></div>Shipment Values</div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">Unit Price <span class="req">*</span></label><input type="number" placeholder="0.00"></div>
+      <div class="fg"><label class="flabel">Currency <span class="req">*</span></label><select><option value="" disabled selected></option><option>USD</option><option>EUR</option><option>AUD</option><option>GBP</option></select></div>
+      <div class="fg"><label class="flabel">Quantity <span class="req">*</span></label><input type="number" placeholder="0"></div>
+      <div class="fg"><label class="flabel">Insurance Cost</label><input type="number" placeholder="0.00"></div>
+      <div class="fg"><label class="flabel">Freight Charges</label><input type="number" placeholder="0.00"></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:#7c3aed"></div>HS Classification</div>
+    <div class="frow"><div class="fg"><label class="flabel">HS Code <span class="req">*</span></label><div class="qai-wrap"><div class="hs-row"><button class="qai-btn" onclick="triggerQAI('landed-hs')">✦ QAI</button><button class="qai-arr" onclick="triggerQAI('landed-hs')">▾</button><input class="hs-input" id="landed-hs" type="text" placeholder="AI result or enter manually"><button class="ot-btn">⊞ Open Tariff</button></div><div class="qai-panel" id="panel-landed-hs"></div></div></div></div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--text-3)"></div>Customs Unit of Measure</div>
+    <div class="uom-card"><div class="uom-head"><span class="uom-title">UOM Rows</span><button class="add-btn">+ Add</button></div><div class="uom-empty">No UOM rows added</div></div>
+  </div>
+  <div class="btn-row" style="margin-bottom:8px;"><button class="btn-s">Reset Form</button></div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--green)"></div>Sourcings</div>
+    <div class="src-head"><span class="src-lbl">Sourcings <span class="src-cnt">0</span></span><button class="add-btn" onclick="addSourcing()">+ Add</button></div>
+    <div class="tbl-wrap"><table><thead><tr><th>Country of Export</th><th>Country of Origin</th><th>Unit Price</th><th>Insurance Cost</th><th>Freight Charges</th><th></th></tr></thead><tbody id="src-body"><tr class="tr-empty"><td colspan="6">No sourcings added yet — click + Add to compare origin countries.</td></tr></tbody></table></div>
+    <div class="calc-bar"><div class="calc-note">Ready to calculate?<small>Make sure at least one sourcing origin is selected above.</small></div><button class="btn-p">Calculate Landed Cost ›</button></div>
+  </div>
+</div>
+
+<!-- ── ML IMPORT LANDED COST ── -->
+<div class="page" id="page-ml">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;">
+    <div><div class="page-title">ML Import Landed Cost Wizard</div><div class="page-sub">Classify and calculate landed costs for multiple items at once</div></div>
+    <div style="display:flex;gap:8px;"><button class="btn-s">Reset</button><button class="classify-btn">✦ Classify All</button><button class="btn-p">Calculate All ›</button></div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--brand)"></div>Shared Settings</div>
+    <div class="shared-bar">
+      <div class="frow" style="margin-bottom:0;">
+        <div class="fg"><label class="flabel" style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">Importing Country</label><select><option>🇺🇸 United States (US)</option><option>🇦🇺 Australia</option></select></div>
+        <div class="fg"><label class="flabel" style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">INCO Term</label><select><option>FOB – Free On Board</option><option>CIF</option></select></div>
+        <div class="fg"><label class="flabel" style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">Mode of Transport</label><select><option>🚢 Sea</option><option>✈️ Air</option></select></div>
+        <div class="fg"><label class="flabel" style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;">Effective Date</label><input type="date"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--amber)"></div>Line Items</div>
+    <div class="li-head"><span class="li-title">Items</span><button class="add-btn" onclick="addLineItem()">+ Add Item</button></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Product Description</th><th>HS Code <span class="ai-classify">✦ AI Classify</span></th><th>Country of Origin</th><th>Unit Price</th><th>Currency</th><th>Qty</th><th></th></tr></thead>
+        <tbody id="ml-body">
+          <tr><td>1</td><td><input type="text" value="Mens sandals"></td><td><input type="text" placeholder="e.g. 6402994940"></td><td><select><option>🇨🇳 China</option><option>🇮🇳 India</option><option>🇨🇦 Canada</option><option>🇲🇽 Mexico</option><option>🇩🇪 Germany</option></select></td><td><input type="number" value="25"></td><td><select><option>USD</option><option>EUR</option></select></td><td><input type="number" value="10"></td><td><button class="row-del">✕</button></td></tr>
+          <tr><td>2</td><td><input type="text" value="Wheat"></td><td><input type="text" placeholder="e.g. 6402994940"></td><td><select><option>🇨🇦 Canada</option><option>🇨🇳 China</option></select></td><td><input type="number" value="5"></td><td><select><option>USD</option></select></td><td><input type="number" value="100"></td><td><button class="row-del">✕</button></td></tr>
+          <tr><td>3</td><td><input type="text" value="Cotton t-shirt"></td><td><input type="text" placeholder="e.g. 6402994940"></td><td><select><option>🇲🇽 Mexico</option><option>🇨🇳 China</option></select></td><td><input type="number" value="8"></td><td><select><option>USD</option></select></td><td><input type="number" value="50"></td><td><button class="row-del">✕</button></td></tr>
+          <tr><td>4</td><td><input type="text" value="Binoculars"></td><td><input type="text" placeholder="e.g. 6402994940"></td><td><select><option>🇩🇪 Germany</option><option>🇨🇳 China</option></select></td><td><input type="number" value="120"></td><td><select><option>USD</option></select></td><td><input type="number" value="5"></td><td><button class="row-del">✕</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── CLASSIFICATION WIZARD ── -->
+<div class="page" id="page-classify">
+  <div class="page-title">Classification Wizard</div>
+  <div class="step-bar"><div class="step-item"><div class="step-n on">1</div><span class="step-lbl on">Product Details</span></div><span class="step-sep">›</span><div class="step-item"><div class="step-n off">2</div><span class="step-lbl off">Results</span></div></div>
+  <div class="req-note"><span class="r">*</span> Indicates a required field</div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--brand)"></div>Product Details</div>
+    <div class="frow"><div class="fg"><label class="flabel">Product Description <span class="req">*</span></label><input type="text" placeholder="Enter your product description here – short and long descriptions (e.g. from catalog) are acceptable"></div></div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">Country <span class="req">*</span></label><select><option value="" disabled selected></option><option>🇺🇸 United States</option><option>🇦🇺 Australia</option><option>🇩🇪 Germany</option></select></div>
+      <div class="fg"><label class="flabel">Trade Type <span class="req">*</span></label><select><option value="" disabled selected></option><option>Import</option><option>Export</option></select></div>
+      <div class="fg"><label class="flabel">Effective Date</label><input type="date"></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:#7c3aed"></div>Classification</div>
+    <div class="frow" style="align-items:flex-end;gap:16px;">
+      <div class="fg">
+        <label class="flabel">HS Code</label>
+        <div class="qai-wrap"><div class="hs-row"><button class="qai-btn" onclick="triggerQAI('classify-hs')">✦ QAI</button><button class="qai-arr" onclick="triggerQAI('classify-hs')">▾</button><input class="hs-input" id="classify-hs" type="text" placeholder="AI result or enter manually"><button class="ot-btn">⊞ Open Tariff</button></div><div class="qai-panel" id="panel-classify-hs"></div></div>
+      </div>
+      <div class="fg">
+        <label class="flabel">ECN</label>
+        <div class="hs-row"><button class="qai-btn">✦ QAI</button><button class="qai-arr">▾</button><input class="hs-input" type="text" placeholder="AI result or enter manually"><button class="ecn-btn">⚡ ECN Lookup</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn-s">Reset Form</button></div>
+</div>
+
+<!-- ── DPS WIZARD ── -->
+<div class="page" id="page-dps">
+  <div class="page-title">DPS Wizard</div>
+  <div class="step-bar"><div class="step-item"><div class="step-n on">1</div><span class="step-lbl on">Party Details</span></div><span class="step-sep">›</span><div class="step-item"><div class="step-n off">2</div><span class="step-lbl off">Screen</span></div><span class="step-sep">›</span><div class="step-item"><div class="step-n off">3</div><span class="step-lbl off">Results</span></div></div>
+  <div class="req-note"><span class="r">*</span> Indicates a required field</div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--brand)"></div>Trading Party Details</div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">Party Name <span class="req">*</span></label><input type="text" placeholder="Full legal name"></div>
+      <div class="fg" style="max-width:calc(50% - 5px);"><label class="flabel">Name Type</label><select><option value="" disabled selected></option><option>Individual</option><option>Organization</option><option>Alias</option></select></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="sec-label"><div class="sec-dot" style="background:var(--green)"></div>Address</div>
+    <div class="frow"><div class="fg"><label class="flabel">Address Line 1</label><input type="text"></div></div>
+    <div class="frow"><div class="fg"><label class="flabel">Address Line 2</label><input type="text"></div></div>
+    <div class="frow"><div class="fg"><label class="flabel">Address Line 3</label><input type="text"></div></div>
+    <div class="frow">
+      <div class="fg"><label class="flabel">City</label><input type="text"></div>
+      <div class="fg"><label class="flabel">State</label><input type="text"></div>
+      <div class="fg"><label class="flabel">Postal Code</label><input type="text"></div>
+      <div class="fg"><label class="flabel">Country</label><select><option value="" disabled selected></option><option>🇺🇸 United States</option><option>🇦🇺 Australia</option><option>🇩🇪 Germany</option><option>🇬🇧 United Kingdom</option><option>🇨🇳 China</option><option>🇮🇳 India</option></select></div>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn-s">Reset Form</button><button class="btn-p">Screen Party ›</button></div>
+</div>
+
+<!-- ── TRADE SERVICES PORTAL (API DOCS) ── -->
+<div class="page" id="page-portal">
+  <div class="api-wrap" style="padding:14px 0 40px;">
+    <div class="page-title">TradeWise API Documentation</div>
+    <div class="page-sub">Trade Services API v1 · 99 endpoints · <span style="color:var(--brand);font-weight:500;">tradewise-api.vercel.app</span></div>
+    <div class="api-search"><span class="si">🔍</span><input type="text" placeholder="Search endpoints or descriptions…"></div>
+
+    <div class="api-group">
+      <div class="api-group-label"><div class="sec-dot" style="background:var(--red)"></div>Party Screening <span class="api-cnt">1 endpoint</span></div>
+      <div class="tbl-wrap" style="margin-top:0;">
+        <div style="padding:8px 12px;">
+          <div class="api-row"><span class="method m-post">POST</span><div><div class="ep-name">screen-party</div><div class="ep-desc">Screens a party against known party lists and determines if there's a match entity.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="api-group">
+      <div class="api-group-label"><div class="sec-dot" style="background:var(--brand)"></div>HS Classification <span class="api-cnt">14 endpoints</span></div>
+      <div class="tbl-wrap" style="margin-top:0;"><div style="padding:4px 12px;">
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="ep-name">determine-hs</div><div class="ep-desc">Determines the best HS identification and alternative classifications for a commodity based on product name and description.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">validate-hs</div><div class="ep-desc">Determines the validity of an HS number.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">search-tariff</div><div class="ep-desc">Returns the HS numbers from a tariff based on a keyword search.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">map-hs</div><div class="ep-desc">Maps an HS number of a source country to equivalent HS number(s) of a target country.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-child-hs</div><div class="ep-desc">Returns the children HS lists for a given HS code.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-hs-details</div><div class="ep-desc">Returns the HS details information (+).</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-hs-chapters</div><div class="ep-desc">Returns the HS chapters for an import or export country.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-hs-subtitles</div><div class="ep-desc">Returns the HS sections entries for a given HS code.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-hs-uoms</div><div class="ep-desc">Returns a list of UOMs for an HS number.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-path-to-hs</div><div class="ep-desc">For a given HS code, returns the HS nodes from the chapter level to the final HS number.</div></div></div>
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="ep-name">determine-product-hs-misclassification</div><div class="ep-desc">Determines if a submitted HS classification may be incorrect based on product name and description.</div></div></div>
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="ep-name">determine-supplemental-hs</div><div class="ep-desc">Determines the supplemental HS number that may be applicable for a specified HS number.</div></div></div>
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="ep-name">validate-supplemental-as-primary-hs</div><div class="ep-desc">Determines if supplemental HS numbers have been incorrectly used in place of a primary HS number.</div></div></div>
+      </div></div>
+    </div>
+
+    <div class="api-group">
+      <div class="api-group-label"><div class="sec-dot" style="background:var(--orange)"></div>Export Controls (ECN) <span class="api-cnt">14 endpoints</span></div>
+      <div class="tbl-wrap" style="margin-top:0;"><div style="padding:4px 12px;">
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="ep-name">determine-ecn</div><div class="ep-desc">If trading (exd) and (isd) a commodity, determines if it is controlled for dual or military use based on product name and set.</div></div></div>
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="ep-name">determine-ecn-export-controls</div><div class="ep-desc">Determines the ECN-based export controls that may apply for an export country.</div></div></div>
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="ep-name">determine-ecn-export-control-exceptions</div><div class="ep-desc">Determines exceptions that may apply for a specified ECN export control number.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">explain-ecn-export-control-applicability</div><div class="ep-desc">Explains why an ECN export control number may apply.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">validate-ecn</div><div class="ep-desc">Determines the validity of an ECN number.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">search-ecn</div><div class="ep-desc">Returns the ECN numbers from a keyword search.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-ecn-categories</div><div class="ep-desc">Returns the categories for an exporting country's export control numbers.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-ecn-exceptions</div><div class="ep-desc">Returns a list of ECN-based export control exceptions for an export country.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-ecn-export-controls</div><div class="ep-desc">Returns a list of ECN-based export controls for an export country.</div></div></div>
+      </div></div>
+    </div>
+
+    <div class="api-group">
+      <div class="api-group-label"><div class="sec-dot" style="background:var(--amber)"></div>Embargoes &amp; Sanctions <span class="api-cnt">3 endpoints</span></div>
+      <div class="tbl-wrap" style="margin-top:0;"><div style="padding:4px 12px;">
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">determine-embargoes-sanctions</div><div class="ep-desc">Determines the embargoes and sanctions that may apply for an import or export country.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">explain-embargo-sanction-applicability</div><div class="ep-desc">Explains why an embargo or sanction may apply in a given trade scenario.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-embargoes-sanctions-details</div><div class="ep-desc">Retrieve information for one or more embargoes or sanctions (description, filing info…).</div></div></div>
+      </div></div>
+    </div>
+
+    <div class="api-group">
+      <div class="api-group-label"><div class="sec-dot" style="background:var(--green)"></div>Import Duties &amp; Costs <span class="api-cnt">20 endpoints</span></div>
+      <div class="tbl-wrap" style="margin-top:0;"><div style="padding:4px 12px;">
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">determine-duties</div><div class="ep-desc">Determines applicable import duties (general (mfn/gst), national programs (mtfn/sct), for your HS code.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">determine-duty-exemptions</div><div class="ep-desc">Determines the duty exemptions or reductions that may apply.</div></div></div>
+        <div class="api-row"><span class="method m-post">POST</span><div><div class="ep-name">calculate-duty</div><div class="ep-desc">Returns the total applicable duty for imported goods based on HS code, country, quota info, and more.</div></div></div>
+        <div class="api-row"><span class="method m-get">GET</span><div><div class="ep-name">get-SPIs</div><div class="ep-desc">Returns a list of SPIs for a country.</div></div></div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ═══ QAI MODAL ═══ -->
+<div class="qai-modal-bg" id="qai-modal-bg" onclick="closeQAIModal(event)">
+  <div class="qai-modal">
+    <div class="qai-modal-head">
+      <div class="qai-modal-head-left">
+        <div class="qai-modal-accent"></div>
+        <div>
+          <div class="qai-modal-title">Quick AI Classification</div>
+          <div class="qai-modal-sub">Fast, directional HS code — uses product description only</div>
+        </div>
+      </div>
+      <button class="qai-modal-close" onclick="closeQAIModal()">✕</button>
+    </div>
+    <div class="qai-modal-body" id="qai-modal-body">
+      <div class="qai-input-label">Product Description</div>
+      <textarea class="qai-input-box" id="qai-desc-input" placeholder="e.g. Laptop computer, Intel Core i7, for commercial use"></textarea>
+      <button class="qai-classify-btn" id="qai-classify-btn" onclick="runQAIClassify()">
+        ✦ Quick Classify (QAI)
+      </button>
+      <div id="qai-result-area"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer" id="main-footer">
+  <div class="footer-save"><div class="sdot"></div>Draft auto-saved</div>
+  <div style="font-size:11px;color:var(--text-3);">TradeWise · Trade Scenario Wizards</div>
+</div>
+
+<script>
+const pages = {
+  home:'page-home',export:'page-export',import:'page-import',
+  landed:'page-landed',ml:'page-ml',classify:'page-classify',
+  dps:'page-dps',portal:'page-portal'
+};
+const navMap = {
+  home:null,export:'Export Scenario Wizard',import:'Import Scenario Wizard',
+  landed:'Import Landed Cost Wizard',ml:'ML Import Landed Cost Wizard',
+  classify:'Classification Wizard',dps:'DPS Wizard',portal:null
+};
+
+/* ═══ NAVIGATION ═══ */
+function nav(key) {
+  Object.values(pages).forEach(id => { const el=document.getElementById(id); if(el) el.classList.remove('active'); });
+  const el = document.getElementById(pages[key]);
+  if(el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.nav-child').forEach(n=>n.classList.remove('active'));
+  if(key==='home') document.querySelectorAll('.nav-item')[0].classList.add('active');
+  else if(key==='portal') document.querySelectorAll('.nav-item')[2].classList.add('active');
+  else {
+    const children=document.querySelectorAll('.nav-child');
+    const labels=['Export Scenario Wizard','Import Scenario Wizard','Import Landed Cost Wizard','ML Import Landed Cost Wizard','Classification Wizard','DPS Wizard'];
+    const idx=labels.indexOf(navMap[key]);
+    if(idx>=0 && children[idx]) children[idx].classList.add('active');
+    document.querySelectorAll('.nav-item')[1].classList.add('active');
+  }
+  document.getElementById('main-footer').style.display=(key==='portal'||key==='home')?'none':'flex';
+  document.querySelector('.main').scrollTop=0;
+}
+
+function toggleWizards(el) {
+  const n=document.getElementById('wizard-nav');
+  n.style.display=n.style.display==='none'?'block':'none';
+}
+
+/* ═══ ✅ TOAST ═══ */
+let toastT;
+function showToast(msg, type='success') {
+  let t = document.getElementById('app-toast');
+  if(!t){ t=document.createElement('div'); t.id='app-toast'; t.className='toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastT);
+  toastT = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+/* ═══ ✅ FORM VALIDATION ═══ */
+function validateRequired(pageId) {
+  const page = document.getElementById(pageId);
+  if(!page) return true;
+  let valid = true;
+  page.querySelectorAll('.invalid').forEach(el=>el.classList.remove('invalid'));
+  page.querySelectorAll('.field-err').forEach(el=>el.classList.remove('show'));
+
+  page.querySelectorAll('input[data-req], select[data-req]').forEach(el => {
+    const empty = !el.value || el.value.trim()==='' || el.value==='0';
+    if(empty) {
+      el.classList.add('invalid');
+      const err = el.parentElement.querySelector('.field-err');
+      if(err) err.classList.add('show');
+      valid = false;
+    }
+  });
+  if(!valid) showToast('⚠ Please fill in all required fields', 'error');
+  return valid;
+}
+
+function runScenario(pageId) {
+  if(validateRequired(pageId)) {
+    showToast('✓ Scenario submitted — calculating results…', 'success');
+  }
+}
+
+/* ═══ ✅ LOCALSTORAGE PREFERENCES ═══ */
+const PREF_KEY = 'tradewise_prefs';
+
+function savePrefs() {
+  const prefs = {
+    location: document.getElementById('pref-location')?.value || '',
+    currency: document.getElementById('pref-currency')?.value || '',
+    export:   document.getElementById('pref-export')?.value || '',
+    origin:   document.getElementById('pref-origin')?.value || '',
+    import:   document.getElementById('pref-import')?.value || '',
+    inco:     document.getElementById('pref-inco')?.value || '',
+    transport:document.getElementById('pref-transport')?.value || '',
+    effToday: document.getElementById('eff-today')?.checked || false
+  };
+  try {
+    localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
+    const saved = document.getElementById('pref-saved');
+    if(saved){ saved.style.display='inline'; setTimeout(()=>saved.style.display='none', 2500); }
+    showToast('✓ Preferences saved successfully', 'success');
+  } catch(e) {
+    showToast('Could not save preferences', 'error');
+  }
+}
+
+function clearPrefs() {
+  try { localStorage.removeItem(PREF_KEY); } catch(e){}
+  ['pref-location','pref-currency','pref-export','pref-origin','pref-import','pref-inco','pref-transport'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.selectedIndex = 0;
+  });
+  const cb = document.getElementById('eff-today');
+  if(cb) cb.checked = false;
+  showToast('✓ Preferences cleared', 'success');
+}
+
+function loadPrefs() {
+  try {
+    const raw = localStorage.getItem(PREF_KEY);
+    if(!raw) return;
+    const p = JSON.parse(raw);
+    const set = (id, val) => { const el=document.getElementById(id); if(el&&val){ for(let o of el.options){ if(o.value===val||o.text===val){ el.value=o.value; break; } } } };
+    set('pref-location', p.location);
+    set('pref-currency', p.currency);
+    set('pref-export',   p.export);
+    set('pref-origin',   p.origin);
+    set('pref-import',   p.import);
+    set('pref-inco',     p.inco);
+    set('pref-transport',p.transport);
+    const cb = document.getElementById('eff-today');
+    if(cb) cb.checked = !!p.effToday;
+  } catch(e) {}
+}
+
+/* ═══ ✅ QAI MODAL — LLM HS CODE CLASSIFIER ═══ */
+let activeQAIField = null;
+
+function triggerQAI(fieldId) {
+  activeQAIField = fieldId;
+  // Pre-fill description from active page
+  const activePage = document.querySelector('.page.active');
+  const descInput = activePage ? activePage.querySelector('input[type="text"]:not(.hs-input)') : null;
+  const desc = descInput ? descInput.value.trim() : '';
+  document.getElementById('qai-desc-input').value = desc;
+  document.getElementById('qai-result-area').innerHTML = '';
+  document.getElementById('qai-modal-bg').classList.add('show');
+  if(!desc) document.getElementById('qai-desc-input').focus();
+}
+
+function closeQAIModal(e) {
+  if(!e || e.target === document.getElementById('qai-modal-bg')) {
+    document.getElementById('qai-modal-bg').classList.remove('show');
+  }
+}
+
+async function runQAIClassify() {
+  const desc = document.getElementById('qai-desc-input').value.trim();
+  if(!desc) { showToast('⚠ Enter a product description first', 'error'); return; }
+
+  const btn = document.getElementById('qai-classify-btn');
+  const area = document.getElementById('qai-result-area');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⟳</span> Classifying…';
+  area.innerHTML = `<div class="qai-loading-state"><div class="big-spin">⟳</div><p>Identifying HS codes with AI…</p></div>`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        messages: [{
+          role: 'user',
+          content: `You are an expert customs classification specialist. Given the product description, identify the best HS code.
+
+Product description: "${desc}"
+
+Respond ONLY with a JSON object, no markdown:
+{
+  "code": "XXXXXXXXXX",
+  "description": "Official tariff description from the HS schedule",
+  "confidence": 95,
+  "reasoning": "Step-by-step GRI classification reasoning (2-3 sentences)",
+  "assumptions": "What you assumed about the product to reach this classification",
+  "related_codes": [
+    {"code": "XXXXXXXXXX", "description": "Related code description"},
+    {"code": "XXXXXXXXXX", "description": "Related code description"},
+    {"code": "XXXXXXXXXX", "description": "Related code description"}
+  ]
+}`
+        }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const r = JSON.parse(clean);
+
+    const confColor = r.confidence >= 85 ? '#0e7c4a' : r.confidence >= 60 ? '#b45309' : '#9898b0';
+    const relatedRows = (r.related_codes||[]).map(rc =>
+      `<tr${rc.code===r.code?' class="highlight"':''}><td>${rc.code}</td><td>${rc.description}</td></tr>`
+    ).join('');
+
+    area.innerHTML = `
+      <div class="qai-best-card">
+        <div class="qai-best-label">✦ Best Match</div>
+        <div class="qai-best-code">${r.code}</div>
+        <div class="qai-best-desc">${r.description}</div>
+        <div class="qai-best-footer">
+          <div class="qai-conf-bar-wrap">
+            <div class="qai-conf-bar-track"><div class="qai-conf-bar-fill" style="width:${r.confidence}%;background:${confColor};"></div></div>
+            <div class="qai-conf-text" style="color:${confColor};">${r.confidence}% confidence</div>
+          </div>
+          <button class="use-btn" onclick="applyQAICode('${r.code}')">Use This →</button>
+        </div>
+      </div>
+
+      <div class="qai-section-title">Reasoning</div>
+      <div class="qai-reasoning"><strong>Reasoning:</strong> ${r.reasoning}</div>
+      <div class="qai-assumptions"><strong>Assumptions:</strong> ${r.assumptions}</div>
+
+      <div class="qai-tariff-label">
+        Tariff Context — Codes around this heading
+        <span class="qai-tariff-heading">(${r.code.substring(0,4)}XX)</span>
+      </div>
+      <table class="qai-tariff-table">
+        <thead><tr><th>HS Code</th><th>Description</th></tr></thead>
+        <tbody>${relatedRows}</tbody>
+      </table>`;
+
+  } catch(e) {
+    const isCORS = e.message.includes('Failed to fetch') || e.message.includes('NetworkError') || e.message.includes('Load failed') || !navigator.onLine;
+    area.innerHTML = `
+      <div style="padding:16px;background:#fdf0ee;border:1px solid #f5b7b1;border-radius:8px;margin-top:14px;">
+        <div style="font-size:13px;font-weight:700;color:#c0392b;margin-bottom:8px;">⚠ QAI Cannot Run Here</div>
+        <div style="font-size:12px;color:#5a5a72;line-height:1.8;">
+          The QAI feature uses the Anthropic API which <strong>cannot be called directly from GitHub Pages</strong> due to browser security (CORS) restrictions.<br><br>
+          <strong style="color:#1a1a2e;">To use QAI classification:</strong><br>
+          • Share this app link in a <strong>Claude.ai conversation</strong> and ask Claude to open it as an artifact<br>
+          • Or build a small backend proxy server to relay API calls<br><br>
+          <span style="font-size:11px;color:#9898b0;">Error: ${e.message}</span>
+        </div>
+      </div>`;
+    showToast('QAI requires Claude.ai or a backend proxy', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✦ Quick Classify (QAI)';
+  }
+}
+
+function applyQAICode(code) {
+  if(activeQAIField) {
+    const input = document.getElementById(activeQAIField);
+    if(input) { input.value = code; input.dispatchEvent(new Event('input')); }
+  }
+  document.getElementById('qai-modal-bg').classList.remove('show');
+  showToast(`✓ HS Code ${code} applied`, 'success');
+}
+
+function applyHS(fieldId, code) {
+  const input = document.getElementById(fieldId);
+  if(input) { input.value = code; }
+  showToast(`✓ HS Code ${code} applied`, 'success');
+}
+
+// Close on Escape
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeQAIModal(); });
+let srcN = 0;
+function addSourcing() {
+  srcN++;
+  const body = document.getElementById('src-body');
+  const empty = body.querySelector('.tr-empty');
+  if(empty) empty.remove();
+  const r = document.createElement('tr');
+  r.innerHTML = `<td><select style="font-size:11px;height:27px;"><option>🇨🇳 China</option><option>🇮🇳 India</option><option>🇻🇳 Vietnam</option><option>🇨🇦 Canada</option></select></td><td><select style="font-size:11px;height:27px;"><option>🇨🇳 China</option><option>🇮🇳 India</option></select></td><td><input type="number" placeholder="0.00" style="width:80px;"></td><td><input type="number" placeholder="0.00" style="width:80px;"></td><td><input type="number" placeholder="0.00" style="width:80px;"></td><td><button onclick="this.closest('tr').remove();updateSrcCount()" style="background:none;border:none;color:#9898b0;cursor:pointer;font-size:12px;padding:2px 5px;border-radius:3px;">✕</button></td>`;
+  body.appendChild(r);
+  updateSrcCount();
+}
+function updateSrcCount() {
+  const body = document.getElementById('src-body');
+  const cnt = body.querySelectorAll('tr:not(.tr-empty)').length;
+  document.querySelector('.src-cnt').textContent = cnt;
+  if(cnt===0) {
+    const r = document.createElement('tr');
+    r.className='tr-empty';
+    r.innerHTML='<td colspan="6">No sourcings added yet — click + Add to compare origin countries.</td>';
+    body.appendChild(r);
+  }
+}
+
+let mlN = 4;
+function addLineItem() {
+  mlN++;
+  const body = document.getElementById('ml-body');
+  const r = document.createElement('tr');
+  r.innerHTML = `<td>${mlN}</td><td><input type="text" placeholder="Product description"></td><td><input type="text" placeholder="e.g. 6402994940"></td><td><select><option>🇺🇸 United States</option><option>🇨🇳 China</option><option>🇩🇪 Germany</option></select></td><td><input type="number" value="0"></td><td><select><option>USD</option><option>EUR</option></select></td><td><input type="number" value="1"></td><td><button class="row-del" onclick="this.closest('tr').remove()">✕</button></td>`;
+  body.appendChild(r);
+}
+
+/* ═══ INIT ═══ */
+nav('home');
+loadPrefs();
+</script>
+</body>
+</html>
